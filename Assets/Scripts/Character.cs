@@ -75,6 +75,7 @@ public class Character : MonoBehaviour {
     [SerializeField, SerializeReadOnly] private bool wantsSprint;
     [SerializeField, SerializeReadOnly] private bool wantsWalk;
     [SerializeField, SerializeReadOnly] private bool wantsCrouch;
+    [SerializeField, SerializeReadOnly] private bool isAiming;
 
     private CharacterController characterController;
 
@@ -95,8 +96,11 @@ public class Character : MonoBehaviour {
     }
 
     void Update() {
+        var moveInputLastFrame = moveInput;
+
         wantsSprint = sprintAction.action.IsPressed();
         wantsCrouch = crouchAction.action.IsPressed();
+        isAiming = aimAction.action.IsPressed();
         moveInput = moveAction.action.ReadValue<Vector2>();
         lookInput = lookAction.action.ReadValue<Vector2>();
 
@@ -106,6 +110,12 @@ public class Character : MonoBehaviour {
             movementGait = MovementGait.Walk;
         } else {
             movementGait = MovementGait.Run;
+        }
+
+        if (isAiming) {
+            movementMode = MovementMode.LookTowardsCamera;
+        } else {
+            movementMode = MovementMode.RotateTowardsMovement;
         }
 
         var gait = movementGaitInfos.Get(movementGait);
@@ -122,11 +132,11 @@ public class Character : MonoBehaviour {
             if (moveInput.magnitude > 0) {
                 movement = transform.forward * gait.baseSpeed;
 
-                var prevTargetHeading = targetHeading;
                 targetHeading = globalHeading + Vector3.SignedAngle(Vector3.forward, new Vector3(moveInput.x, 0, moveInput.y), Vector3.up);
-                var targetHeadingDelta = Mathf.Abs(Mathf.DeltaAngle(prevTargetHeading, targetHeading));
 
-                if (targetHeadingDelta >= gait.sharpTurnThreshold) {
+                var startedMoving = moveInputLastFrame == Vector2.zero;
+                var sharpTurn = Mathf.Abs(Mathf.DeltaAngle(targetHeading, currentHeading)) >= gait.sharpTurnThreshold;
+                if (sharpTurn || startedMoving) {
                     currentHeading = targetHeading;
                 } else {
                     currentHeading = Mathf.MoveTowardsAngle(currentHeading, targetHeading, gait.turnRate * Time.deltaTime);
