@@ -864,8 +864,8 @@ MonoBehaviour:
   targetCharacter: {fileID: 1456539503}
   targetOffset: {x: 0.5, y: 1.4}
   targetDistance: 3.5
-  rotationSpeed: 1
-  rotationLerpFactor: 0.2
+  rotationSpeed: 0.2
+  rotationLerpFactor: 0.3
   wallPenetrationThreshold: 0.1
   lookAction: {fileID: -4684030846624343392, guid: d15d2bce19a44ae2f8e14c7cfeec96c0, type: 3}
   targetYaw: 0
