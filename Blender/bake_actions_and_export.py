@@ -16,6 +16,12 @@ actions_to_bake = [a for a in bpy.data.actions if a.users > 0]
 if not actions_to_bake:
     raise RuntimeError("No actions found with users")
 
+def RemoveRigKeyframes(action, armature_obj):
+    bone_paths = tuple(pb.path_from_id() for pb in armature_obj.pose.bones)
+    for fcurve in list(action.fcurves):
+        if fcurve.data_path.startswith(bone_paths):
+            action.fcurves.remove(fcurve)
+
 for action in actions_to_bake:
     print(f"Baking '{action.name}' ...")
 
@@ -26,7 +32,7 @@ for action in actions_to_bake:
     if deform_obj.animation_data is None:
         deform_obj.animation_data_create()
     deform_obj.animation_data.action = action
-
+    
     frame_start, frame_end = action.frame_range
     frame_start, frame_end = int(frame_start), int(frame_end)
     bpy.context.scene.frame_start = frame_start
@@ -38,6 +44,8 @@ for action in actions_to_bake:
     bpy.context.view_layer.objects.active = deform_obj
     bpy.ops.object.mode_set(mode='POSE')
     bpy.ops.pose.select_all(action='SELECT')
+
+    RemoveRigKeyframes(action, deform_obj)
 
     bpy.ops.nla.bake(
         frame_start=frame_start,
