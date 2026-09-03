@@ -112,7 +112,10 @@ def ExportSelectionAsFBX(filename):
 # Export all actions individually
 for action in actions_to_bake:
     deform_obj.animation_data.action = action
+    
     ExportSelectionAsFBX(os.path.join(OUTPUT_DIR, action.name + ".fbx"))
+    
+    RemoveRigKeyframes(action, deform_obj)
 
 deform_obj.animation_data.action = None
 
