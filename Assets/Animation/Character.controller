@@ -147,6 +147,45 @@ AnimatorStateTransition:
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 1
+--- !u!206 &-5172838454145524384
+BlendTree:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Blend Tree
+  m_Childs:
+  - serializedVersion: 2
+    m_Motion: {fileID: -6245048346814070091, guid: 04bbc3509dc2329b6a9ea83bef1f4485, type: 3}
+    m_Threshold: 0
+    m_Position: {x: 0, y: 0}
+    m_TimeScale: 1
+    m_CycleOffset: 0
+    m_DirectBlendParameter: Gait
+    m_Mirror: 0
+  - serializedVersion: 2
+    m_Motion: {fileID: 5890166877199609323, guid: 4eadcebdcdbbc0c41ba05b5f24027c20, type: 3}
+    m_Threshold: 1
+    m_Position: {x: 0, y: 0}
+    m_TimeScale: 1
+    m_CycleOffset: 0
+    m_DirectBlendParameter: Gait
+    m_Mirror: 0
+  - serializedVersion: 2
+    m_Motion: {fileID: 5890166877199609323, guid: 4eadcebdcdbbc0c41ba05b5f24027c20, type: 3}
+    m_Threshold: 2
+    m_Position: {x: 0, y: 0}
+    m_TimeScale: 2
+    m_CycleOffset: 0
+    m_DirectBlendParameter: Gait
+    m_Mirror: 0
+  m_BlendParameter: Gait
+  m_BlendParameterY: Gait
+  m_MinThreshold: 0
+  m_MaxThreshold: 2
+  m_UseAutomaticThresholds: 0
+  m_NormalizedBlendValues: 0
+  m_BlendType: 0
 --- !u!1102 &-3692389278939931677
 AnimatorState:
   serializedVersion: 6
@@ -181,7 +220,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Crouched
+  m_Name: Crouched Locomotion
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -195,7 +234,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: -6245048346814070091, guid: 04bbc3509dc2329b6a9ea83bef1f4485, type: 3}
+  m_Motion: {fileID: -5172838454145524384}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 

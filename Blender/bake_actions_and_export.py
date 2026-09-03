@@ -1,4 +1,6 @@
 import bpy
+import bpy_extras
+from bpy_extras import anim_utils
 
 CONTROL_ARMATURE_NAME = "CTRL-Rig"
 DEFORM_ARMATURE_NAME = "DEF-Rig"
@@ -18,9 +20,24 @@ if not actions_to_bake:
 
 def RemoveRigKeyframes(action, armature_obj):
     bone_paths = tuple(pb.path_from_id() for pb in armature_obj.pose.bones)
-    for fcurve in list(action.fcurves):
-        if fcurve.data_path.startswith(bone_paths):
-            action.fcurves.remove(fcurve)
+
+    if hasattr(action, "fcurves"):
+        # Blender pre 5.0
+        fcurve_collections = [action.fcurves]
+    else:
+        # Blender 5.0+
+        fcurve_collections = []
+        for slot in action.slots:
+            channelbag = bpy_extras.anim_utils.action_get_channelbag_for_slot(action, slot)
+            if channelbag is not None:
+                fcurve_collections.append(channelbag.fcurves)
+
+    for fcurves in fcurve_collections:
+        for fcurve in list(fcurves):
+            if fcurve.data_path.startswith(bone_paths):
+                fcurves.remove(fcurve)
+
+bpy.ops.object.mode_set(mode='OBJECT')
 
 for action in actions_to_bake:
     print(f"Baking '{action.name}' ...")
