@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: d07a248b83117a8139e068cfc7bd2338
+guid: f1c5e47ba5b71adc6b31cbac2d77516e
 ModelImporter:
   serializedVersion: 24501
   internalIDToNameTable: []
@@ -32,9 +32,9 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Human_Idle_To_Crouched_LF
-      takeName: DEF-Rig|Human_Idle_To_Crouched_LF
-      internalID: -2357112633046649597
+      name: Human_Crouched_LF_To_Idle
+      takeName: DEF-Rig|Human_Crouched_LF_To_Idle
+      internalID: -507651980018152523
       firstFrame: 0
       lastFrame: 20
       wrapMode: 0
