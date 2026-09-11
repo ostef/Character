@@ -35,14 +35,14 @@ ModelImporter:
       name: Human_Lean_F
       takeName: DEF-Rig|Human_Lean_F
       internalID: -4741039597169148479
-      firstFrame: 0
-      lastFrame: 1
+      firstFrame: 1
+      lastFrame: 2
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
       cycleOffset: 0
       loop: 0
-      hasAdditiveReferencePose: 0
+      hasAdditiveReferencePose: 1
       loopTime: 0
       loopBlend: 0
       loopBlendOrientation: 0

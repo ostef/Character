@@ -73,7 +73,7 @@ public class AnimBlendSpace2D : AnimBlendSpace<Vector2> {
             var firstMagnitude = first.position.magnitude;
             var weight = 1.0f;
 
-            for (int j = 0; j < samples.Count; i += 1) {
+            for (int j = 0; j < samples.Count; j += 1) {
                 if (i == j) {
                     continue;
                 }

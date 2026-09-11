@@ -178,7 +178,7 @@ PrefabInstance:
     - target: {fileID: 5866666021909216657, guid: 9b7e9bb6034f1c862900f7eb48a986f8, type: 3}
       propertyPath: m_Controller
       value: 
-      objectReference: {fileID: 9100000, guid: 03d13cfaef4742b3bb874cdb36eb4c9b, type: 2}
+      objectReference: {fileID: 0}
     - target: {fileID: 5866666021909216657, guid: 9b7e9bb6034f1c862900f7eb48a986f8, type: 3}
       propertyPath: m_ApplyRootMotion
       value: 0
@@ -189,7 +189,7 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 9b7e9bb6034f1c862900f7eb48a986f8, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1804894454}
+      addedObject: {fileID: 1804894456}
   m_SourcePrefab: {fileID: 100100000, guid: 9b7e9bb6034f1c862900f7eb48a986f8, type: 3}
 --- !u!4 &93366369 stripped
 Transform:
@@ -2295,7 +2295,7 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 9b7e9bb6034f1c862900f7eb48a986f8, type: 3}
   m_PrefabInstance: {fileID: 93366368}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1804894454
+--- !u!114 &1804894456
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2304,12 +2304,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 1804894453}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: de64922e3a933e84982655f94ffd3007, type: 3}
+  m_Script: {fileID: 11500000, guid: ae21748c626d77c42b3e79b66d27ae66, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CharacterAnimationController
-  walkRunLerpFactor: 0.1
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterAnimController
+  locomotionBlendSpace: {fileID: 11400000, guid: 05f2611b939baa64797a2c7895de6b8c, type: 2}
+  leanBlendSpace: {fileID: 11400000, guid: 3e94cb4eeb15afd4bb35515dfe41ed56, type: 2}
+  breathingAdditive: {fileID: 3089397664246859371, guid: c9eadd1912b8d0b2c92aa75f16fff306, type: 3}
+  upperBodyMask: {fileID: 31900000, guid: 019b499c7e1f9a907bdc66a4476ddd09, type: 2}
+  maxAcceleration: 1
   velocity: {x: 0, y: 0, z: 0}
-  leanAccelerationValue: 1
+  acceleration: {x: 0, y: 0, z: 0}
 --- !u!1 &1867824059 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 01b73c28034c43970b32f93b78218ac9, type: 3}

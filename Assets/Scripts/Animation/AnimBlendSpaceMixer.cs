@@ -11,7 +11,7 @@ where TBlendSpace : AnimBlendSpace<TParameter> {
     protected TParameter targetParameter;
     protected TParameter parameter;
     protected float normalizedTime;
-    float normalizedTimeSpeed = 1.0f;
+    protected float normalizedTimeSpeed = 1.0f;
     protected float[] weights;
 
     public void SetParameter(TParameter newParameter) {
@@ -38,7 +38,7 @@ where TBlendSpace : AnimBlendSpace<TParameter> {
 
             if (weights[i] > 0) {
                 var sample = blendSpace.samples[i];
-                var clipSpeed = GetAnimationClipNormalizedTimeSpeed(sample.clip);
+                var clipSpeed = GetAnimationClipNormalizedTimeSpeed(sample.clip) * sample.speedMultiplier;
                 normalizedTimeSpeed += clipSpeed * weights[i];
             }
         }

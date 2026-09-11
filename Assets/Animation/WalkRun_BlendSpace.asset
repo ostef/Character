@@ -12,5 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da3349d570ee2c84f872bc4e20241bdf, type: 3}
   m_Name: WalkRun_BlendSpace
   m_EditorClassIdentifier: Assembly-CSharp::AnimBlendSpace2D
-  samples: []
-  parameterLerpFactor: {x: 0.1, y: 0.1}
+  samples:
+  - position: {x: 0, y: 0}
+    clip: {fileID: 7205774371881802541, guid: 4b41aec1b80c9fb5aa5e5bb7a89dee4e, type: 3}
+  - position: {x: 0, y: 1}
+    clip: {fileID: 6254791084690615317, guid: 440315a1b9db79ebba9c528f2fb39f8f, type: 3}
+  - position: {x: 1, y: 0}
+    clip: {fileID: -1842531938266849501, guid: 82f0d07da7aadee488db140fa2552e2f, type: 3}
+  - position: {x: 1, y: 1}
+    clip: {fileID: -8113679548886706616, guid: 71e3de8a91e458d36b26fc9ec44df7b7, type: 3}
+  parameterLerpFactor: 0.01
+  mode: 0

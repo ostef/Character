@@ -177,7 +177,8 @@ public class Character : MonoBehaviour {
         }
 
         velocity = movement + Vector3.up * velocityY;
-        // animController.velocity = velocity;
+        animController.velocity = velocity;
+        animController.heading = currentHeading;
 
         characterController.Move(velocity * Time.deltaTime);
     }

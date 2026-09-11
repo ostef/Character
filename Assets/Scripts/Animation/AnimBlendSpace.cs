@@ -5,6 +5,7 @@ public abstract class AnimBlendSpace<T> : ScriptableObject {
     [System.Serializable]
     public struct Sample {
         public T position;
+        public float speedMultiplier;
         public AnimationClip clip;
     }
 

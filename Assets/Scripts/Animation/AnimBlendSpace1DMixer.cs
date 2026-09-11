@@ -9,12 +9,12 @@ public class AnimBlendSpace1DMixer : AnimBlendSpaceMixer<AnimBlendSpace1D, float
 
         for (int i = 0; i < numSamples; i += 1) {
             clipPlayables[i] = AnimationClipPlayable.Create(graph, blendSpace.samples[i].clip);
-            graph.Connect(clipPlayables[i], 0, mixer, i);
+            mixer.ConnectInput(i, clipPlayables[i], 0);
             mixer.SetInputWeight(i, 0.0f);
         }
 
         var scriptPlayable = ScriptPlayable<AnimBlendSpace1DMixer>.Create(graph, 1);
-        graph.Connect(mixer, 0, scriptPlayable, 0);
+        scriptPlayable.ConnectInput(0, mixer, 0);
         scriptPlayable.SetInputWeight(0, 1.0f);
 
         var behaviour = scriptPlayable.GetBehaviour();
