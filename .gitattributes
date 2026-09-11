@@ -15,12 +15,12 @@
 # [attr]unity-yaml        merge=unityyamlmerge text linguist-language=yaml linguist-generated
 
 # Unity source files
-*.cginc                 text
-*.compute               text linguist-language=hlsl
-*.cs                    text diff=csharp
-*.hlsl                  text linguist-language=hlsl
-*.raytrace              text linguist-language=hlsl
-*.shader                text
+*.cginc                 text eol=lf
+*.compute               text eol=lf linguist-language=hlsl
+*.cs                    text eol=lf diff=csharp
+*.hlsl                  text eol=lf linguist-language=hlsl
+*.raytrace              text eol=lf linguist-language=hlsl
+*.shader                text eof=lf
 
 # Unity JSON files
 *.asmdef                unity-json
@@ -31,9 +31,9 @@
 *.shadersubgraph        unity-json
 
 # Unity UI Toolkit files
-*.tss                   text diff=css linguist-language=css
-*.uss                   text diff=css linguist-language=css
-*.uxml                  text linguist-language=xml linguist-detectable
+*.tss                   text eol=lf diff=css linguist-language=css
+*.uss                   text eol=lf diff=css linguist-language=css
+*.uxml                  text eol=lf linguist-language=xml linguist-detectable
 
 # Unity YAML files
 *.anim                  unity-yaml

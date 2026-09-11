@@ -4,12 +4,22 @@ using UnityEngine.Animations;
 
 [RequireComponent(typeof(Animator))]
 public class CharacterAnimController : MonoBehaviour {
-    public AnimBlendSpace1D locomotionBlendSpace;
+    public AnimBlendSpace2D locomotionBlendSpace;
 
     PlayableGraph graph;
-    ScriptPlayable<AnimBlendSpace1DMixer> locomotionMixer;
+    ScriptPlayable<AnimBlendSpace2DMixer> locomotionMixer;
 
-    public float movementSpeed;
+    float stride;
+    public float Stride {
+        get => stride;
+        set => stride = Mathf.Clamp01(value);
+    }
+
+    float walkRun;
+    public float WalkRun {
+        get => walkRun;
+        set => walkRun = Mathf.Clamp01(value);
+    }
 
     void Start() {
         graph = PlayableGraph.Create("Character");
@@ -18,13 +28,19 @@ public class CharacterAnimController : MonoBehaviour {
         var animator = GetComponent<Animator>();
         var output = AnimationPlayableOutput.Create(graph, "Animation", animator);
 
-        locomotionMixer = AnimBlendSpace1DMixer.Create(graph, locomotionBlendSpace);
+        locomotionMixer = AnimBlendSpace2DMixer.Create(graph, locomotionBlendSpace);
 
         output.SetSourcePlayable(locomotionMixer);
         graph.Play();
     }
 
+    void OnDestroy() {
+        if (graph.IsValid()) {
+            graph.Destroy();
+        }
+    }
+
     void Update() {
-        locomotionMixer.GetBehaviour().SetParameter(movementSpeed);
+        locomotionMixer.GetBehaviour().SetParameter(WalkRun, Stride);
     }
 }

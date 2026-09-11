@@ -1,8 +1,15 @@
+using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.Animations;
 
-public class AnimBlendSpace1DMixer : AnimBlendSpaceMixer<AnimBlendSpace1D, float> {
-    public static ScriptPlayable<AnimBlendSpace1DMixer> Create(PlayableGraph graph, AnimBlendSpace1D blendSpace) {
+public class AnimBlendSpace2DMixer : AnimBlendSpaceMixer<AnimBlendSpace2D, Vector2> {
+
+    public void SetParameter(float x, float y) {
+        targetParameter.x = x;
+        targetParameter.y = y;
+    }
+
+    public static ScriptPlayable<AnimBlendSpace2DMixer> Create(PlayableGraph graph, AnimBlendSpace2D blendSpace) {
         var numSamples = blendSpace.samples.Count;
         var mixer = AnimationMixerPlayable.Create(graph, numSamples);
         var clipPlayables = new AnimationClipPlayable[numSamples];
@@ -13,7 +20,7 @@ public class AnimBlendSpace1DMixer : AnimBlendSpaceMixer<AnimBlendSpace1D, float
             mixer.SetInputWeight(i, 0.0f);
         }
 
-        var scriptPlayable = ScriptPlayable<AnimBlendSpace1DMixer>.Create(graph, 1);
+        var scriptPlayable = ScriptPlayable<AnimBlendSpace2DMixer>.Create(graph, 1);
         graph.Connect(mixer, 0, scriptPlayable, 0);
         scriptPlayable.SetInputWeight(0, 1.0f);
 

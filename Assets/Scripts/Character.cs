@@ -124,11 +124,11 @@ public class Character : MonoBehaviour {
             movementGait = MovementGait.Run;
         }
 
-        // if (movementGait == MovementGait.Walk) {
-        //     animController.WalkRun = 0.0f;
-        // } else {
-        //     animController.WalkRun = 1.0f;
-        // }
+        if (movementGait == MovementGait.Walk) {
+            animController.WalkRun = 0.0f;
+        } else {
+            animController.WalkRun = 1.0f;
+        }
 
         if (isAiming) {
             movementMode = MovementMode.LookTowardsCamera;
@@ -164,8 +164,8 @@ public class Character : MonoBehaviour {
             break;
         }
 
-        animController.movementSpeed = moveInput.magnitude * ((float)movementGait + 1.0f);
-        // animController.Stride = moveInput.magnitude;
+        // animController.movementSpeed = moveInput.magnitude * ((float)movementGait + 1.0f);
+        animController.Stride = moveInput.magnitude;
 
         transform.rotation = Quaternion.Euler(0, currentHeading, 0);
 
