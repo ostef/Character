@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: f1c5e47ba5b71adc6b31cbac2d77516e
+guid: 7b4b661c3db38fb4fb92553109ebadad
 ModelImporter:
   serializedVersion: 24501
   internalIDToNameTable: []
@@ -32,19 +32,19 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Human_Crouched_LF_To_Idle
-      takeName: DEF-Rig|Human_Crouched_LF_To_Idle
-      internalID: -507651980018152523
+      name: Human_TPose
+      takeName: DEF-Rig|Human_TPose
+      internalID: 3600853112298215247
       firstFrame: 0
-      lastFrame: 20
+      lastFrame: 0
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 0
-      loopBlend: 0
+      loopTime: 1
+      loopBlend: 1
       loopBlendOrientation: 0
       loopBlendPositionY: 0
       loopBlendPositionXZ: 0
