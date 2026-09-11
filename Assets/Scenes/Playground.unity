@@ -167,6 +167,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -8342533720284584995, guid: 9b7e9bb6034f1c862900f7eb48a986f8, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: -9103484930961366303, guid: 9b7e9bb6034f1c862900f7eb48a986f8, type: 3}
     - target: {fileID: 919132149155446097, guid: 9b7e9bb6034f1c862900f7eb48a986f8, type: 3}
       propertyPath: m_Name
       value: Model
@@ -182,7 +186,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 9b7e9bb6034f1c862900f7eb48a986f8, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1804894454}
   m_SourcePrefab: {fileID: 100100000, guid: 9b7e9bb6034f1c862900f7eb48a986f8, type: 3}
 --- !u!4 &93366369 stripped
 Transform:
@@ -863,7 +870,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CameraController
   targetCharacter: {fileID: 1456539503}
   targetOffset: {x: 0.5, y: 1.4}
-  targetDistance: 3.5
+  targetDistance: 3
   rotationSpeed: 0.2
   rotationLerpFactor: 0.3
   wallPenetrationThreshold: 0.1
@@ -2283,6 +2290,26 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -2432090755550338912, guid: 01b73c28034c43970b32f93b78218ac9, type: 3}
+--- !u!1 &1804894453 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 9b7e9bb6034f1c862900f7eb48a986f8, type: 3}
+  m_PrefabInstance: {fileID: 93366368}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1804894454
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1804894453}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de64922e3a933e84982655f94ffd3007, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterAnimationController
+  walkRunLerpFactor: 0.1
+  velocity: {x: 0, y: 0, z: 0}
+  leanAccelerationValue: 1
 --- !u!1 &1867824059 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 01b73c28034c43970b32f93b78218ac9, type: 3}

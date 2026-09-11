@@ -78,9 +78,11 @@ public class Character : MonoBehaviour {
     [SerializeField, SerializeReadOnly] private bool isAiming;
 
     private CharacterController characterController;
+    private CharacterAnimController animController;
 
     void Start() {
         characterController = GetComponent<CharacterController>();
+        animController = GetComponentInChildren<CharacterAnimController>();
     }
 
     void OnEnable() {
@@ -104,6 +106,16 @@ public class Character : MonoBehaviour {
         moveInput = moveAction.action.ReadValue<Vector2>();
         lookInput = lookAction.action.ReadValue<Vector2>();
 
+        if (wantsCrouch) {
+            if (movementStance == MovementStance.Crouching) {
+                movementStance = MovementStance.Standing;
+                // animController.IsCrouched = false;
+            } else {
+                movementStance = MovementStance.Crouching;
+                // animController.IsCrouched = true;
+            }
+        }
+
         if (wantsSprint) {
             movementGait = MovementGait.Sprint;
         } else if (wantsWalk) {
@@ -111,6 +123,12 @@ public class Character : MonoBehaviour {
         } else {
             movementGait = MovementGait.Run;
         }
+
+        // if (movementGait == MovementGait.Walk) {
+        //     animController.WalkRun = 0.0f;
+        // } else {
+        //     animController.WalkRun = 1.0f;
+        // }
 
         if (isAiming) {
             movementMode = MovementMode.LookTowardsCamera;
@@ -146,6 +164,9 @@ public class Character : MonoBehaviour {
             break;
         }
 
+        animController.movementSpeed = moveInput.magnitude * ((float)movementGait + 1.0f);
+        // animController.Stride = moveInput.magnitude;
+
         transform.rotation = Quaternion.Euler(0, currentHeading, 0);
 
         var velocityY = velocity.y;
@@ -156,6 +177,7 @@ public class Character : MonoBehaviour {
         }
 
         velocity = movement + Vector3.up * velocityY;
+        // animController.velocity = velocity;
 
         characterController.Move(velocity * Time.deltaTime);
     }
