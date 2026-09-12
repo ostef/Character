@@ -5,8 +5,6 @@ using UnityEngine;
 using UnityEngine.Animations;
 using UnityEngine.Playables;
 
-public sealed class AnimGraphPose {}
-
 [System.Serializable]
 [Graph("animgraph")]
 public class AnimGraph : Graph {
@@ -18,10 +16,10 @@ public class AnimGraph : Graph {
     public PlayableGraph CreatePlayableGraph(string name, Animator animator) {
         var outputNodes = GetNodes().OfType<AnimGraphOutputNode>().ToArray();
         if (outputNodes.Length == 0) {
-            throw new System.Exception("AnimGraph contains no output node"); // @Todo: use a better exception type
+            throw new System.Exception("Anim graph contains no output node"); // @Todo: use a better exception type
         }
         if (outputNodes.Length > 1) {
-            throw new System.Exception("AnimGraph contains more than one output node"); // @Todo: use a better exception type
+            throw new System.Exception("Anim graph contains more than one output node"); // @Todo: use a better exception type
         }
 
         var outputNode = outputNodes[0];
@@ -38,29 +36,16 @@ public class AnimGraph : Graph {
     }
 }
 
-[System.Serializable]
-public abstract class AnimGraphNode : Node {
-    public abstract Playable CreatePlayable(PlayableGraph graph);
+[DataTypeStyleMapper(typeof(AnimGraph))]
+public class AnimGraphDataStyleMapper : DataTypeStyleMapper {
+    public AnimGraphDataStyleMapper() {
+        var poseIcon = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Editor/Icons/AnimGraphPose.png");
+        Register(typeof(AnimGraphPose), poseIcon, Color.white);
 
-    protected AnimGraphNode GetInputAnimNode(string name) {
-        var port = GetInputPortByName(name);
-        if (port == null) {
-            throw new System.Exception($"Input port '{name}' not found");
-        }
+        var clipIcon = EditorGUIUtility.IconContent("AnimationClip Icon").image as Texture2D;
+        Register(typeof(AnimationClip), clipIcon, Color.white);
 
-        if (!port.IsConnected) {
-            throw new System.Exception($"Input port '{name}' is not connected");
-        }
-
-        var inputNode = port.FirstConnectedPort.GetNode();
-        if (inputNode is not AnimGraphNode) {
-            throw new System.Exception($"Input port '{name}' is not an animation pose");
-        }
-
-        return (AnimGraphNode)inputNode;
-    }
-
-    protected void AddPoseOutput(IPortDefinitionContext context) {
-        context.AddOutputPort<AnimGraphPose>("Output").Build();
+        var avatarMaskIcon = EditorGUIUtility.IconContent("AvatarMask Icon").image as Texture2D;
+        Register(typeof(AvatarMask), avatarMaskIcon, Color.white);
     }
 }
