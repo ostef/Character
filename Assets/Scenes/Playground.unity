@@ -874,6 +874,7 @@ MonoBehaviour:
   rotationSpeed: 0.2
   rotationLerpFactor: 0.3
   wallPenetrationThreshold: 0.1
+  fovMaxZoomWhenCollide: 20
   lookAction: {fileID: -4684030846624343392, guid: d15d2bce19a44ae2f8e14c7cfeec96c0, type: 3}
   targetYaw: 0
   currentYaw: 0
@@ -2314,7 +2315,9 @@ MonoBehaviour:
   maxAcceleration: 0.1
   leanX: 0
   leanY: 0
+  stride: 0
   heading: 0
+  walkRun: 0
   velocity: {x: 0, y: 0, z: 0}
   acceleration: {x: 0, y: 0, z: 0}
 --- !u!1 &1867824059 stripped

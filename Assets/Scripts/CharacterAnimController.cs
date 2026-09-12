@@ -15,28 +15,26 @@ public class CharacterAnimController : MonoBehaviour {
     ScriptPlayable<AnimBlendSpace2DMixer> locomotionMixer;
     ScriptPlayable<AnimBlendSpace2DMixer> leanMixer;
 
-    [Range(-1, 1)]
-    public float leanX;
+    [Header("Internal")]
+    [SerializeField, SerializeReadOnly] float leanX;
+    [SerializeField, SerializeReadOnly] float leanY;
 
-    [Range(-1, 1)]
-    public float leanY;
-
-    float stride;
+    [SerializeField, SerializeReadOnly] float stride;
     public float Stride {
         get => stride;
         set => stride = Mathf.Clamp01(value);
     }
 
-    public float heading;
+    [SerializeReadOnly] public float heading;
 
-    float walkRun;
+    [SerializeField, SerializeReadOnly] float walkRun;
     public float WalkRun {
         get => walkRun;
         set => walkRun = Mathf.Clamp01(value);
     }
 
     Vector3 velocityLastFrame;
-    public Vector3 velocity;
+    [SerializeField, SerializeReadOnly] public Vector3 velocity;
     [SerializeField, SerializeReadOnly] Vector3 acceleration;
 
     void Start() {

@@ -1,0 +1,66 @@
+using System.Linq;
+using Unity.GraphToolkit.Editor;
+using UnityEditor;
+using UnityEngine;
+using UnityEngine.Animations;
+using UnityEngine.Playables;
+
+public sealed class AnimGraphPose {}
+
+[System.Serializable]
+[Graph("animgraph")]
+public class AnimGraph : Graph {
+    [MenuItem("Assets/Create/Animation/Graph")]
+    static void CreateAssetFile() {
+        GraphDatabase.PromptInProjectBrowserToCreateNewAsset<AnimGraph>();
+    }
+
+    public PlayableGraph CreatePlayableGraph(string name, Animator animator) {
+        var outputNodes = GetNodes().OfType<AnimGraphOutputNode>().ToArray();
+        if (outputNodes.Length == 0) {
+            throw new System.Exception("AnimGraph contains no output node"); // @Todo: use a better exception type
+        }
+        if (outputNodes.Length > 1) {
+            throw new System.Exception("AnimGraph contains more than one output node"); // @Todo: use a better exception type
+        }
+
+        var outputNode = outputNodes[0];
+
+        var graph = PlayableGraph.Create(name);
+        graph.SetTimeUpdateMode(DirectorUpdateMode.GameTime);
+
+        var outputPlayable = outputNode.CreatePlayable(graph);
+
+        var output = AnimationPlayableOutput.Create(graph, name, animator);
+        output.SetSourcePlayable(outputPlayable);
+
+        return graph;
+    }
+}
+
+[System.Serializable]
+public abstract class AnimGraphNode : Node {
+    public abstract Playable CreatePlayable(PlayableGraph graph);
+
+    protected AnimGraphNode GetInputAnimNode(string name) {
+        var port = GetInputPortByName(name);
+        if (port == null) {
+            throw new System.Exception($"Input port '{name}' not found");
+        }
+
+        if (!port.IsConnected) {
+            throw new System.Exception($"Input port '{name}' is not connected");
+        }
+
+        var inputNode = port.FirstConnectedPort.GetNode();
+        if (inputNode is not AnimGraphNode) {
+            throw new System.Exception($"Input port '{name}' is not an animation pose");
+        }
+
+        return (AnimGraphNode)inputNode;
+    }
+
+    protected void AddPoseOutput(IPortDefinitionContext context) {
+        context.AddOutputPort<AnimGraphPose>("Output").Build();
+    }
+}
