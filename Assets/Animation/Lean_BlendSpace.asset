@@ -28,5 +28,5 @@ MonoBehaviour:
   - position: {x: 1, y: 0}
     speedMultiplier: 1
     clip: {fileID: -3194753118996638597, guid: a3248cac09d9ce3449ee83757f37c84f, type: 3}
-  parameterLerpFactor: 0.6
+  parameterInterpSpeed: 10
   mode: 1

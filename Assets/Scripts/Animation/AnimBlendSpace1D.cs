@@ -2,8 +2,8 @@ using UnityEngine;
 
 [CreateAssetMenu(menuName="Animation/Blend Space 1D")]
 public class AnimBlendSpace1D : AnimBlendSpace<float> {
-    public override float LerpParameter(float a, float b) {
-        return Mathf.Lerp(a, b, parameterLerpFactor);
+    public override float InterpParameter(float a, float b, float deltaTime) {
+        return Interpolate(a, b, deltaTime, parameterInterpSpeed);
     }
 
     public override void GetWeights(float parameter, float[] weights) {

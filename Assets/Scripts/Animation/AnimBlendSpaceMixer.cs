@@ -28,7 +28,7 @@ where TBlendSpace : AnimBlendSpace<TParameter> {
     }
 
     public override void PrepareFrame(Playable playable, FrameData info) {
-        parameter = blendSpace.LerpParameter(parameter, targetParameter);
+        parameter = blendSpace.InterpParameter(parameter, targetParameter, info.deltaTime);
 
         blendSpace.GetWeights(parameter, weights);
 

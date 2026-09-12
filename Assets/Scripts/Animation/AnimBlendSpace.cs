@@ -10,9 +10,23 @@ public abstract class AnimBlendSpace<T> : ScriptableObject {
     }
 
     public List<Sample> samples;
-    [Range(0.01f, 1.0f)]
-    public float parameterLerpFactor = 0.1f;
 
-    public abstract T LerpParameter(T a, T b);
+    [Min(0.0f)]
+    public float parameterInterpSpeed = 10.0f;
+
+    public static float Interpolate(float a, float b, float deltaTime, float speed) {
+        if (speed <= 0) {
+            return b;
+        }
+
+        var dist = b - a;
+        if (dist * dist < 0.00001f) {
+            return b;
+        }
+
+        return a + dist * Mathf.Clamp01(deltaTime * speed);
+    }
+
+    public abstract T InterpParameter(T a, T b, float deltaTime);
     public abstract void GetWeights(T parameter, float[] weights);
 }

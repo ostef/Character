@@ -9,7 +9,7 @@ public class CharacterAnimController : MonoBehaviour {
     [SerializeField] AnimBlendSpace2D leanBlendSpace;
     [SerializeField] AnimationClip breathingAdditive;
     [SerializeField] AvatarMask upperBodyMask;
-    [SerializeField] float maxAcceleration = 10.0f;
+    [SerializeField] float maxAcceleration = 0.1f;
 
     PlayableGraph graph;
     ScriptPlayable<AnimBlendSpace2DMixer> locomotionMixer;
@@ -74,15 +74,12 @@ public class CharacterAnimController : MonoBehaviour {
         acceleration = velocity - velocityLastFrame;
         velocityLastFrame = velocity;
 
-        var rotation = Quaternion.Euler(0, heading, 0);
-        var forwardVector = rotation * Vector3.forward;
-        var rightVector = rotation * Vector3.right;
-        var relativeForwardAccel = Vector3.Dot(Vector3.forward * acceleration.z, forwardVector);
-        var relativeRightAccel = Vector3.Dot(Vector3.right * acceleration.x, rightVector);
-        Debug.Log($"{relativeForwardAccel}, {relativeRightAccel}");
+        var relativeAcceleration = Quaternion.Euler(0, -heading, 0) * acceleration;
+        var relativeForwardAccel = relativeAcceleration.z;
+        var relativeRightAccel = relativeAcceleration.x;
 
-        leanX = Mathf.Clamp(relativeRightAccel * 100, -1, 1);
-        leanY = Mathf.Clamp(relativeForwardAccel * 100, -1, 1);
+        leanX = Mathf.Clamp(relativeRightAccel / maxAcceleration, -1, 1);
+        leanY = Mathf.Clamp(relativeForwardAccel / maxAcceleration, -1, 1);
         leanMixer.GetBehaviour().SetParameter(leanX, leanY);
         locomotionMixer.GetBehaviour().SetParameter(WalkRun, Stride);
     }

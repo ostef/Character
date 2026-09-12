@@ -1849,17 +1849,17 @@ MonoBehaviour:
     walk:
       baseSpeed: 1.2
       headingLerpFactor: 0.2
-      turnRate: 180
+      turnRate: 360
       sharpTurnThreshold: 160
     run:
       baseSpeed: 3
       headingLerpFactor: 0.2
-      turnRate: 120
+      turnRate: 360
       sharpTurnThreshold: 160
     sprint:
       baseSpeed: 6.7
       headingLerpFactor: 0.2
-      turnRate: 90
+      turnRate: 360
       sharpTurnThreshold: 160
   gravityMult: 1
   groundedGravityMult: 1
@@ -2311,7 +2311,10 @@ MonoBehaviour:
   leanBlendSpace: {fileID: 11400000, guid: 3e94cb4eeb15afd4bb35515dfe41ed56, type: 2}
   breathingAdditive: {fileID: 3089397664246859371, guid: c9eadd1912b8d0b2c92aa75f16fff306, type: 3}
   upperBodyMask: {fileID: 31900000, guid: 019b499c7e1f9a907bdc66a4476ddd09, type: 2}
-  maxAcceleration: 1
+  maxAcceleration: 0.1
+  leanX: 0
+  leanY: 0
+  heading: 0
   velocity: {x: 0, y: 0, z: 0}
   acceleration: {x: 0, y: 0, z: 0}
 --- !u!1 &1867824059 stripped

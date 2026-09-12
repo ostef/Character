@@ -9,8 +9,11 @@ public class AnimBlendSpace2D : AnimBlendSpace<Vector2> {
 
     public Mode mode;
 
-    public override Vector2 LerpParameter(Vector2 a, Vector2 b) {
-        return Vector2.Lerp(a, b, parameterLerpFactor);
+    public override Vector2 InterpParameter(Vector2 a, Vector2 b, float deltaTime) {
+        return new Vector2(
+            Interpolate(a.x, b.x, deltaTime, parameterInterpSpeed),
+            Interpolate(a.y, b.y, deltaTime, parameterInterpSpeed)
+        );
     }
 
     public override void GetWeights(Vector2 parameter, float[] weights) {
