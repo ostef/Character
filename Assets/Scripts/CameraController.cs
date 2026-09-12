@@ -8,6 +8,8 @@ public class CameraController : MonoBehaviour {
     [SerializeField] private float rotationSpeed = 5.0f;
     [SerializeField] private float rotationLerpFactor = 0.2f;
     [SerializeField] private float wallPenetrationThreshold = 0.1f;
+    [SerializeField, Range(0.0f, 90.0f)]
+    private float fovMaxZoomWhenCollide = 10.0f;
 
     [Header("Input")]
     [SerializeField] private InputActionReference lookAction;
@@ -17,10 +19,15 @@ public class CameraController : MonoBehaviour {
     [SerializeField, SerializeReadOnly] private float currentYaw;
     [SerializeField, SerializeReadOnly] private float targetPitch;
     [SerializeField, SerializeReadOnly] private float currentPitch;
+    private float baseFov;
+    private Camera camera;
 
     void Start() {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+
+        camera = GetComponent<Camera>();
+        baseFov = camera.fieldOfView;
     }
 
     void LateUpdate() {
@@ -31,6 +38,7 @@ public class CameraController : MonoBehaviour {
         currentPitch = Mathf.LerpAngle(currentPitch, targetPitch, rotationLerpFactor);
 
         targetYaw += lookInput.x * rotationSpeed;
+        targetYaw %= 360.0f;
         currentYaw = Mathf.LerpAngle(currentYaw, targetYaw, rotationLerpFactor);
 
         targetCharacter.globalHeading = currentYaw;
@@ -47,6 +55,11 @@ public class CameraController : MonoBehaviour {
         RaycastHit raycastResult;
         if (Physics.Raycast(lookAtPosition, -transform.forward, out raycastResult, targetDistance - wallPenetrationThreshold)) {
             targetPosition = raycastResult.point + transform.forward * wallPenetrationThreshold;
+
+            // Cool effect: make the FOV zoom when colliding
+            var distanceT = Vector3.Distance(lookAtPosition, targetPosition) / targetDistance;
+            distanceT = Mathf.Clamp01(1 - distanceT);
+            camera.fieldOfView = Mathf.Lerp(baseFov, baseFov - fovMaxZoomWhenCollide, distanceT);
         }
 
         // Don't interpolate, this causes hiccups because of fluctuations in deltaTime
