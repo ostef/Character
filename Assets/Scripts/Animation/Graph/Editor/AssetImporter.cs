@@ -62,6 +62,7 @@ public class AnimGraphAssetImporter : ScriptedImporter {
 
         return result;
     }
+
     string GetPortVariableName(IPort port) {
         if (port.IsConnected && port.FirstConnectedPort.GetNode() is IVariableNode variableNode) {
             return variableNode.Variable.Name;

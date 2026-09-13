@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEngine;
 
 [System.Serializable]
-[Graph("animgraph")]
+[Graph("animgraph", GraphOptions.SupportsSubgraphs)]
 public class EditorAnimGraph : Graph {
     [MenuItem("Assets/Create/Animation/Graph")]
     static void CreateAssetFile() {

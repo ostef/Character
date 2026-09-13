@@ -1,5 +1,6 @@
 using System;
 using Unity.GraphToolkit.Editor;
+using UnityEngine;
 
 public sealed class EditorAnimGraphPose {}
 
@@ -13,16 +14,7 @@ public abstract class EditorAnimGraphNode : Node {
             throw new Exception($"Input port '{name}' not found");
         }
 
-        if (!port.IsConnected) {
-            return null;
-        }
-
-        var inputNode = port.FirstConnectedPort.GetNode();
-        if (inputNode is not EditorAnimGraphNode) {
-            throw new Exception($"Input port '{name}' is not an animation pose");
-        }
-
-        return (EditorAnimGraphNode)inputNode;
+        return port.GetConnectedNode<EditorAnimGraphNode>();
     }
 
     protected void AddPoseOutput(IPortDefinitionContext context) {

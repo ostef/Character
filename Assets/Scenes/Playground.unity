@@ -2308,10 +2308,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae21748c626d77c42b3e79b66d27ae66, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CharacterAnimController
-  locomotionBlendSpace: {fileID: 11400000, guid: 05f2611b939baa64797a2c7895de6b8c, type: 2}
-  leanBlendSpace: {fileID: 11400000, guid: 3e94cb4eeb15afd4bb35515dfe41ed56, type: 2}
-  breathingAdditive: {fileID: 3089397664246859371, guid: c9eadd1912b8d0b2c92aa75f16fff306, type: 3}
-  upperBodyMask: {fileID: 31900000, guid: 019b499c7e1f9a907bdc66a4476ddd09, type: 2}
+  animGraph: {fileID: 3965311268370046156, guid: 75a0f329afa5acc4b8a9168487c7f0fd, type: 3}
   maxAcceleration: 0.1
   leanX: 0
   leanY: 0
