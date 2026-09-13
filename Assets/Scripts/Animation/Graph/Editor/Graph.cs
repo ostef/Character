@@ -1,24 +1,21 @@
-using System.Linq;
 using Unity.GraphToolkit.Editor;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.Animations;
-using UnityEngine.Playables;
 
 [System.Serializable]
 [Graph("animgraph")]
-public class AnimGraph : Graph {
+public class EditorAnimGraph : Graph {
     [MenuItem("Assets/Create/Animation/Graph")]
     static void CreateAssetFile() {
-        GraphDatabase.PromptInProjectBrowserToCreateNewAsset<AnimGraph>();
+        GraphDatabase.PromptInProjectBrowserToCreateNewAsset<EditorAnimGraph>();
     }
 }
 
-[DataTypeStyleMapper(typeof(AnimGraph))]
-public class AnimGraphDataStyleMapper : DataTypeStyleMapper {
-    public AnimGraphDataStyleMapper() {
+[DataTypeStyleMapper(typeof(EditorAnimGraph))]
+public class EditorAnimGraphDataStyleMapper : DataTypeStyleMapper {
+    public EditorAnimGraphDataStyleMapper() {
         var poseIcon = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Editor/Icons/AnimGraphPose.png");
-        Register(typeof(AnimGraphPose), poseIcon, Color.white);
+        Register(typeof(EditorAnimGraphPose), poseIcon, Color.white);
 
         var clipIcon = EditorGUIUtility.IconContent("AnimationClip Icon").image as Texture2D;
         Register(typeof(AnimationClip), clipIcon, Color.white);

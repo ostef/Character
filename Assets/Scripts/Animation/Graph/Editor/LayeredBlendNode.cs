@@ -1,11 +1,9 @@
 using UnityEngine;
-using UnityEngine.Playables;
-using UnityEngine.Animations;
 using Unity.GraphToolkit.Editor;
 
 [System.Serializable]
 [Node("Animation", null, "Layered Blend")]
-public class AnimGraphLayeredBlendNode : AnimGraphNode {
+public class EditorAnimGraphLayeredBlendNode : EditorAnimGraphNode {
     public static readonly int MinLayers = 1;
     public static readonly int MaxLayers = 8;
 
@@ -26,10 +24,10 @@ public class AnimGraphLayeredBlendNode : AnimGraphNode {
         inputCountOption.TryGetValue<int>(out var inputCount);
         inputCount = Mathf.Clamp(inputCount, MinLayers, MaxLayers);
 
-        context.AddInputPort<AnimGraphPose>(BasePoseName).Build();
+        context.AddInputPort<EditorAnimGraphPose>(BasePoseName).Build();
 
         for (int i = 0; i < inputCount; i += 1) {
-            context.AddInputPort<AnimGraphPose>(PoseName(i)).Build();
+            context.AddInputPort<EditorAnimGraphPose>(PoseName(i)).Build();
             context.AddInputPort<float>(WeightName(i)).WithDefaultValue(1.0f).Build();
             context.AddInputPort<AnimLayerMode>(ModeName(i)).WithDefaultValue(AnimLayerMode.Override).Build();
             context.AddInputPort<AvatarMask>(MaskName(i)).Build();

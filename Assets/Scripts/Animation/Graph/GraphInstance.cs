@@ -9,7 +9,7 @@ public class AnimGraphInstance : IDisposable {
 
     Dictionary<string, List<Action<float>>> floatBindings = new();
 
-    public AnimGraphInstance(string name, AnimGraphAsset asset, Animator animator) {
+    public AnimGraphInstance(string name, AnimGraph asset, Animator animator) {
         Graph = PlayableGraph.Create(name);
         Graph.SetTimeUpdateMode(DirectorUpdateMode.GameTime);
 

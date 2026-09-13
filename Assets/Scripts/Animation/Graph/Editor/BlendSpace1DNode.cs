@@ -1,9 +1,8 @@
-using UnityEngine.Playables;
 using Unity.GraphToolkit.Editor;
 
 [System.Serializable]
 [Node("Animation", null, "Blend Space 1D")]
-public class AnimGraphBlendSpace1DNode : AnimGraphNode {
+public class EditorAnimGraphBlendSpace1DNode : EditorAnimGraphNode {
     public static readonly string BlendSpaceName = "Blend Space";
     public static readonly string ParameterName = "Parameter";
 

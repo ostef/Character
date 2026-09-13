@@ -1,11 +1,9 @@
 using UnityEngine;
-using UnityEngine.Playables;
-using UnityEngine.Animations;
 using Unity.GraphToolkit.Editor;
 
 [System.Serializable]
 [Node("Animation", null, "Animation Clip")]
-public class AnimGraphClipNode : AnimGraphNode {
+public class EditorAnimGraphClipNode : EditorAnimGraphNode {
     public static readonly string ClipName = "Clip";
     public static readonly string SpeedName = "Speed";
 

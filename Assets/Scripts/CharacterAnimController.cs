@@ -5,7 +5,7 @@ using Unity.Collections;
 
 [RequireComponent(typeof(Animator))]
 public class CharacterAnimController : MonoBehaviour {
-    [SerializeField] AnimGraphAsset animGraph;
+    [SerializeField] AnimGraph animGraph;
     AnimGraphInstance animGraphInstance;
 
     [SerializeField] float maxAcceleration = 0.1f;

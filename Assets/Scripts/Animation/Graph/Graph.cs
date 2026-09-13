@@ -4,18 +4,18 @@ using UnityEngine;
 using UnityEngine.Animations;
 using UnityEngine.Playables;
 
-public class AnimGraphAsset : ScriptableObject {
+public class AnimGraph : ScriptableObject {
     public string outputNodeID;
     [SerializeReference]
-    public List<AnimGraphAssetNode> nodes = new();
+    public List<AnimGraphNode> nodes = new();
 
-    public AnimGraphAssetNode GetNode(string id) {
+    public AnimGraphNode GetNode(string id) {
         return nodes.Find(node => node.nodeID == id);
     }
 }
 
 [Serializable]
-public abstract class AnimGraphAssetNode {
+public abstract class AnimGraphNode {
     public enum Kind {
         Clip,
         BlendSpace1D,
@@ -27,22 +27,22 @@ public abstract class AnimGraphAssetNode {
     public string nodeID;
     public Kind kind;
 
-    public abstract Playable Build(AnimGraphInstance graph, AnimGraphAsset asset);
+    public abstract Playable Build(AnimGraphInstance graph, AnimGraph asset);
 }
 
 [Serializable]
-public class AnimGraphAssetClipNode : AnimGraphAssetNode {
+public class AnimGraphClipNode : AnimGraphNode {
     public AnimationClip clip;
     public float speed;
     public string speedVariableName;
 
-    public AnimGraphAssetClipNode(AnimationClip clip) {
+    public AnimGraphClipNode(AnimationClip clip) {
         nodeID = Guid.NewGuid().ToString();
         kind = Kind.Clip;
         this.clip = clip;
     }
 
-    public override Playable Build(AnimGraphInstance graph, AnimGraphAsset asset) {
+    public override Playable Build(AnimGraphInstance graph, AnimGraph asset) {
         var playable = AnimationClipPlayable.Create(graph.Graph, clip);
         playable.SetSpeed(speed);
 
@@ -55,12 +55,12 @@ public class AnimGraphAssetClipNode : AnimGraphAssetNode {
 }
 
 [Serializable]
-public class AnimGraphAssetBlendSpace1DNode : AnimGraphAssetNode {
+public class AnimGraphBlendSpace1DNode : AnimGraphNode {
     public AnimBlendSpace1D blendSpace;
     public float parameter;
     public string parameterVariableName;
 
-    public AnimGraphAssetBlendSpace1DNode(AnimBlendSpace1D blendSpace, float parameter, string parameterVariableName) {
+    public AnimGraphBlendSpace1DNode(AnimBlendSpace1D blendSpace, float parameter, string parameterVariableName) {
         nodeID = Guid.NewGuid().ToString();
         kind = Kind.BlendSpace1D;
         this.blendSpace = blendSpace;
@@ -68,7 +68,7 @@ public class AnimGraphAssetBlendSpace1DNode : AnimGraphAssetNode {
         this.parameterVariableName = parameterVariableName;
     }
 
-    public override Playable Build(AnimGraphInstance graph, AnimGraphAsset asset) {
+    public override Playable Build(AnimGraphInstance graph, AnimGraph asset) {
         var mixer = AnimBlendSpace1DMixer.Create(graph.Graph, blendSpace);
         mixer.GetBehaviour().SetParameter(parameter);
 
@@ -81,14 +81,14 @@ public class AnimGraphAssetBlendSpace1DNode : AnimGraphAssetNode {
 }
 
 [Serializable]
-public class AnimGraphAssetBlendSpace2DNode : AnimGraphAssetNode {
+public class AnimGraphBlendSpace2DNode : AnimGraphNode {
     public AnimBlendSpace2D blendSpace;
     public float parameterX;
     public string parameterXVariableName;
     public float parameterY;
     public string parameterYVariableName;
 
-    public AnimGraphAssetBlendSpace2DNode(AnimBlendSpace2D blendSpace, float parameterX, string parameterXVariableName, float parameterY, string parameterYVariableName) {
+    public AnimGraphBlendSpace2DNode(AnimBlendSpace2D blendSpace, float parameterX, string parameterXVariableName, float parameterY, string parameterYVariableName) {
         nodeID = Guid.NewGuid().ToString();
         kind = Kind.BlendSpace2D;
         this.blendSpace = blendSpace;
@@ -98,7 +98,7 @@ public class AnimGraphAssetBlendSpace2DNode : AnimGraphAssetNode {
         this.parameterYVariableName = parameterYVariableName;
     }
 
-    public override Playable Build(AnimGraphInstance graph, AnimGraphAsset asset) {
+    public override Playable Build(AnimGraphInstance graph, AnimGraph asset) {
         var mixer = AnimBlendSpace2DMixer.Create(graph.Graph, blendSpace);
         mixer.GetBehaviour().SetParameter(parameterX, parameterY);
 
@@ -115,7 +115,7 @@ public class AnimGraphAssetBlendSpace2DNode : AnimGraphAssetNode {
 }
 
 [Serializable]
-public class AnimGraphAssetBlendNode : AnimGraphAssetNode {
+public class AnimGraphBlendNode : AnimGraphNode {
     [Serializable]
     public struct Input {
         public string nodeID;
@@ -125,13 +125,13 @@ public class AnimGraphAssetBlendNode : AnimGraphAssetNode {
 
     public Input[] inputs;
 
-    public AnimGraphAssetBlendNode(Input[] inputs) {
+    public AnimGraphBlendNode(Input[] inputs) {
         nodeID = Guid.NewGuid().ToString();
         kind = Kind.Blend;
         this.inputs = inputs;
     }
 
-    public override Playable Build(AnimGraphInstance graph, AnimGraphAsset asset) {
+    public override Playable Build(AnimGraphInstance graph, AnimGraph asset) {
         var mixer = AnimationMixerPlayable.Create(graph.Graph, inputs.Length);
         for (var i = 0; i < inputs.Length; i += 1) {
             var input = inputs[i];
@@ -154,7 +154,7 @@ public enum AnimLayerMode {
 }
 
 [Serializable]
-public class AnimGraphAssetLayeredBlendNode : AnimGraphAssetNode {
+public class AnimGraphLayeredBlendNode : AnimGraphNode {
     [Serializable]
     public struct Input {
         public string nodeID;
@@ -167,14 +167,14 @@ public class AnimGraphAssetLayeredBlendNode : AnimGraphAssetNode {
     public string baseInputID;
     public Input[] inputs;
 
-    public AnimGraphAssetLayeredBlendNode(string baseInputID, Input[] inputs) {
+    public AnimGraphLayeredBlendNode(string baseInputID, Input[] inputs) {
         nodeID = Guid.NewGuid().ToString();
         kind = Kind.LayeredBlend;
         this.baseInputID = baseInputID;
         this.inputs = inputs;
     }
 
-    public override Playable Build(AnimGraphInstance graph, AnimGraphAsset asset) {
+    public override Playable Build(AnimGraphInstance graph, AnimGraph asset) {
         var mixer = AnimationLayerMixerPlayable.Create(graph.Graph, inputs.Length + 1);
         var baseNode = asset.GetNode(baseInputID);
         var basePlayable = baseNode.Build(graph, asset);
