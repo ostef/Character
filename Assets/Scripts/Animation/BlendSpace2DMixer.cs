@@ -8,6 +8,14 @@ public class AnimBlendSpace2DMixer : AnimBlendSpaceMixer<AnimBlendSpace2D, Vecto
         targetParameter.y = y;
     }
 
+    public void SetParameterX(float x) {
+        targetParameter.x = x;
+    }
+
+    public void SetParameterY(float y) {
+        targetParameter.y = y;
+    }
+
     public static ScriptPlayable<AnimBlendSpace2DMixer> Create(PlayableGraph graph, AnimBlendSpace2D blendSpace) {
         var numSamples = blendSpace.samples.Count;
         var mixer = AnimationMixerPlayable.Create(graph, numSamples);

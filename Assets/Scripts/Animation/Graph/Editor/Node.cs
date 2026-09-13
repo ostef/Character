@@ -1,31 +1,32 @@
+using System;
 using Unity.GraphToolkit.Editor;
 using UnityEngine.Playables;
 
 public sealed class AnimGraphPose {}
 
-[System.Serializable]
+[Serializable]
 public abstract class AnimGraphNode : Node {
-    public abstract Playable CreatePlayable(PlayableGraph graph);
+    public static readonly string OutputName = "Output";
 
-    protected AnimGraphNode GetInputAnimNode(string name) {
+    public AnimGraphNode GetInputAnimNode(string name) {
         var port = GetInputPortByName(name);
         if (port == null) {
-            throw new System.Exception($"Input port '{name}' not found");
+            throw new Exception($"Input port '{name}' not found");
         }
 
         if (!port.IsConnected) {
-            throw new System.Exception($"Input port '{name}' is not connected");
+            return null;
         }
 
         var inputNode = port.FirstConnectedPort.GetNode();
         if (inputNode is not AnimGraphNode) {
-            throw new System.Exception($"Input port '{name}' is not an animation pose");
+            throw new Exception($"Input port '{name}' is not an animation pose");
         }
 
         return (AnimGraphNode)inputNode;
     }
 
     protected void AddPoseOutput(IPortDefinitionContext context) {
-        context.AddOutputPort<AnimGraphPose>("Output").Build();
+        context.AddOutputPort<AnimGraphPose>(OutputName).Build();
     }
 }
