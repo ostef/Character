@@ -79,10 +79,12 @@ public class Character : MonoBehaviour {
 
     private CharacterController characterController;
     private CharacterAnimController animController;
+    private Animator animator;
 
     void Start() {
         characterController = GetComponent<CharacterController>();
         animController = GetComponentInChildren<CharacterAnimController>();
+        animator = GetComponentInChildren<Animator>();
     }
 
     void OnEnable() {
@@ -124,10 +126,19 @@ public class Character : MonoBehaviour {
             movementGait = MovementGait.Run;
         }
 
-        if (movementGait == MovementGait.Walk) {
-            animController.WalkRun = 0.0f;
-        } else {
-            animController.WalkRun = 1.0f;
+        if (animController != null) {
+            if (movementGait == MovementGait.Walk) {
+                animController.WalkRun = 0.0f;
+            } else {
+                animController.WalkRun = 1.0f;
+            }
+        }
+        if (animator != null) {
+            if (movementGait == MovementGait.Walk) {
+                animator.SetFloat("WalkRun", 0.0f);
+            } else {
+                animator.SetFloat("WalkRun", 1.0f);
+            }
         }
 
         if (isAiming) {
@@ -164,8 +175,13 @@ public class Character : MonoBehaviour {
             break;
         }
 
-        // animController.movementSpeed = moveInput.magnitude * ((float)movementGait + 1.0f);
-        animController.Stride = moveInput.magnitude;
+        if (animController != null) {
+            animController.Stride = moveInput.magnitude;
+        }
+        if (animator != null) {
+            animator.SetFloat("Stride", moveInput.magnitude);
+            animator.SetBool("IsMoving", moveInput.magnitude > 0.0f);
+        }
 
         transform.rotation = Quaternion.Euler(0, currentHeading, 0);
 
@@ -177,8 +193,24 @@ public class Character : MonoBehaviour {
         }
 
         velocity = movement + Vector3.up * velocityY;
-        animController.velocity = velocity;
-        animController.heading = currentHeading;
+
+        if (animController != null) {
+            animController.velocity = velocity;
+            animController.heading = currentHeading;
+        }
+        if (animator != null) {
+            var dir = new Vector3(movement.x, 0, movement.z);
+            if (dir.sqrMagnitude > 0.0f) {
+                dir = dir.normalized;
+                dir = Quaternion.Euler(0, -currentHeading, 0) * dir;
+            }
+
+            var magnitude = movementGait == MovementGait.Walk ? 0.2f : 1.0f;
+
+            animator.SetBool("IsWalking", movementGait == MovementGait.Walk);
+            animator.SetFloat("LeanVelocityX", dir.x * magnitude);
+            animator.SetFloat("LeanVelocityY", dir.z * magnitude);
+        }
 
         characterController.Move(velocity * Time.deltaTime);
     }

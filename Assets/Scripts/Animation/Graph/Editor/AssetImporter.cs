@@ -75,7 +75,10 @@ public class AnimGraphAssetImporter : ScriptedImporter {
         var clipPort = node.GetInputPortByName(EditorAnimGraphClipNode.ClipName);
         clipPort.TryGetValue<AnimationClip>(out var clip);
 
-        return new AnimGraphClipNode(clip);
+        var speedPort = node.GetInputPortByName(EditorAnimGraphClipNode.SpeedName);
+        speedPort.TryGetValue<float>(out var speed);
+
+        return new AnimGraphClipNode(clip, speed, GetPortVariableName(speedPort));
     }
 
     AnimGraphBlendSpace1DNode ProcessBlendSpace1DNode(AnimGraph graph, EditorAnimGraphBlendSpace1DNode node) {

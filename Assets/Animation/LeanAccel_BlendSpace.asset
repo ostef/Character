@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da3349d570ee2c84f872bc4e20241bdf, type: 3}
+  m_Name: LeanAccel_BlendSpace
+  m_EditorClassIdentifier: Assembly-CSharp::AnimBlendSpace2D
+  samples:
+  - position: {x: 0, y: 0}
+    speedMultiplier: 1
+    clip: {fileID: -1842531938266849501, guid: 82f0d07da7aadee488db140fa2552e2f, type: 3}
+  - position: {x: 0, y: 1}
+    speedMultiplier: 1
+    clip: {fileID: -4583847091044680589, guid: 80ba326002ba5a648abe92ccfae99d0b, type: 3}
+  - position: {x: 0, y: -1}
+    speedMultiplier: 1
+    clip: {fileID: -5605895350197363081, guid: c1fd9f440540e864ea37522f551275c4, type: 3}
+  - position: {x: 1, y: 0}
+    speedMultiplier: 1
+    clip: {fileID: 7026046117583016632, guid: 4a4fd33d35f8d184db3982fd2276a6ce, type: 3}
+  - position: {x: -1, y: 0}
+    speedMultiplier: 1
+    clip: {fileID: -4891660988423736516, guid: b3cd144d7795e874788db7d03af1417b, type: 3}
+  parameterInterpSpeed: 10
+  mode: 1

@@ -36,10 +36,12 @@ public class AnimGraphClipNode : AnimGraphNode {
     public float speed;
     public string speedVariableName;
 
-    public AnimGraphClipNode(AnimationClip clip) {
+    public AnimGraphClipNode(AnimationClip clip, float speed, string speedVariableName) {
         nodeID = Guid.NewGuid().ToString();
         kind = Kind.Clip;
         this.clip = clip;
+        this.speed = speed;
+        this.speedVariableName = speedVariableName;
     }
 
     public override Playable Build(AnimGraphInstance graph, AnimGraph asset) {
