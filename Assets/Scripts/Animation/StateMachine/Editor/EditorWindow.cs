@@ -305,9 +305,41 @@ public class AnimStateMachineEditorWindow : EditorWindow {
     private void ShowCanvasContextMenu(Vector2 position) {
         var menu = new GenericMenu();
         menu.AddItem(new GUIContent("Add State"), false, () => AddState(ScreenToWorld(position)));
-        // menu.AddSeparator("");
-        // menu.AddItem(new GUIContent("Frame All"), false, FrameAll);
+        menu.AddSeparator("");
+        menu.AddItem(new GUIContent("Frame All"), false, FrameAll);
         menu.ShowAsContext();
+    }
+
+    private void FrameAll() {
+        if (stateMachine == null || stateMachine.states.Count == 0) {
+            viewOrigin = new Vector2(-100, -100);
+            zoom = 1;
+            return;
+        }
+
+        var canvasRect = CanvasRect;
+        if (canvasRect.width <= 0 || canvasRect.height <= 0) {
+            return;
+        }
+
+        var bounds = stateMachine.states[0].nodeRect;
+        foreach (var state in stateMachine.states) {
+            bounds.xMin = Mathf.Min(bounds.xMin, state.nodeRect.xMin);
+            bounds.xMax = Mathf.Max(bounds.xMax, state.nodeRect.xMax);
+            bounds.yMin = Mathf.Min(bounds.yMin, state.nodeRect.yMin);
+            bounds.yMax = Mathf.Max(bounds.yMax, state.nodeRect.yMax);
+        }
+
+        bounds.xMin -= 50;
+        bounds.xMax += 50;
+        bounds.yMin -= 50;
+        bounds.yMax += 50;
+
+        var zoomX = canvasRect.width / bounds.width;
+        var zoomY = canvasRect.height / bounds.height;
+        zoom = Mathf.Clamp(Mathf.Min(zoomX, zoomY), MinZoom, MaxZoom);
+
+        viewOrigin = bounds.center - new Vector2(canvasRect.width, canvasRect.height) / (2 * zoom);
     }
 
     private AnimState FindStateAtScreenPoint(Vector2 point) {
