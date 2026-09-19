@@ -8,6 +8,9 @@ public class AnimStateMachineEditorWindow : EditorWindow {
     private const float GridMajorSpacing = 100.0f;
     private const float MinZoom = 0.5f;
     private const float MaxZoom = 2f;
+    private const float StateOutlineThickness = 4.0f;
+    private const float TransitionThickness = 4.0f;
+    private const float SelectedTransitionThickness = 6.0f;
 
     private AnimStateMachine stateMachine = null;
     private Vector2 viewOrigin = new Vector2(-100, -100);
@@ -24,6 +27,8 @@ public class AnimStateMachineEditorWindow : EditorWindow {
     private bool isDraggingStates;
     private Vector2 dragStateStartMouseWorldPosition;
     private Dictionary<string, Vector2> dragStateStartPositions = new();
+
+    private string pendingTransitionSourceStateID;
 
     private GUIStyle stateLabelStyle;
 
@@ -67,7 +72,7 @@ public class AnimStateMachineEditorWindow : EditorWindow {
         return (screen - CanvasRect.position) / zoom + viewOrigin;
     }
 
-    private Rect WorldToScreenRect(Rect worldRect) {
+    private Rect WorldToScreen(Rect worldRect) {
         Vector2 pos = WorldToScreen(worldRect.position);
         Vector2 size = worldRect.size * zoom;
         return new Rect(pos, size);
@@ -98,11 +103,16 @@ public class AnimStateMachineEditorWindow : EditorWindow {
 
         DrawGrid(rect);
 
+        Handles.BeginGUI();
+        DrawTransitions();
+        DrawPendingTransition();
+        Handles.EndGUI();
+
         DrawStates();
 
         HandleInput(rect);
 
-        if (isPanning || isDraggingStates) {
+        if (pendingTransitionSourceStateID != null || isPanning || isDraggingStates) {
             Repaint();
         }
     }
@@ -149,9 +159,85 @@ public class AnimStateMachineEditorWindow : EditorWindow {
         }
     }
 
+    private void DrawTransitions() {
+        foreach (var transition in stateMachine.transitions) {
+            DrawSingleTransition(transition, 0);
+        }
+    }
+
+    private void DrawSingleTransition(AnimStateTransition transition, float offset) {
+        var fromState = stateMachine.GetState(transition.fromStateID);
+        var toState = stateMachine.GetState(transition.toStateID);
+        if (fromState == null || toState == null) {
+            return;
+        }
+
+        var fromScreen = WorldToScreen(fromState.nodeRect);
+        var toScreen = WorldToScreen(toState.nodeRect);
+
+        var start = GetClosestPointOnRect(fromScreen, toScreen.center);
+        var end = GetClosestPointOnRect(toScreen, fromScreen.center);
+
+        Handles.color = new Color(0.85f, 0.85f, 0.85f);
+        Handles.DrawAAPolyLine(TransitionThickness, start, end);
+        DrawArrowHead(start, end);
+    }
+
+    private void DrawPendingTransition() {
+        if (pendingTransitionSourceStateID == null) {
+            return;
+        }
+
+        var sourceState = stateMachine.GetState(pendingTransitionSourceStateID);
+        if (sourceState == null) {
+            pendingTransitionSourceStateID = null;
+            return;
+        }
+
+        var sourceStateRect = WorldToScreen(sourceState.nodeRect);
+        var mouseScreen = Event.current.mousePosition;
+        var start = GetClosestPointOnRect(sourceStateRect, mouseScreen);
+
+        Handles.color = new Color(0.3f, 0.8f, 1.0f);
+        Handles.DrawAAPolyLine(TransitionThickness, start, mouseScreen);
+        DrawArrowHead(start, mouseScreen);
+    }
+
+    private Vector2 GetClosestPointOnRect(Rect rect, Vector2 point) {
+        var center = rect.center;
+        var dir = point - center;
+        if (dir.sqrMagnitude < 0.00001f) {
+            return center;
+        }
+
+        var halfW = rect.width * 0.5f;
+        var halfH = rect.height * 0.5f;
+
+        var scaleX = Mathf.Abs(dir.x) > 0.0001f ? halfW / Mathf.Abs(dir.x) : float.MaxValue;
+        var scaleY = Mathf.Abs(dir.y) > 0.0001f ? halfH / Mathf.Abs(dir.y) : float.MaxValue;
+        var scale = Mathf.Min(scaleX, scaleY);
+
+        return center + dir * scale;
+    }
+
+    private void DrawArrowHead(Vector2 start, Vector2 end) {
+        var dir = (end - start).normalized;
+        if (dir.sqrMagnitude < 0.0001f) {
+            return;
+        }
+
+        var normal = new Vector2(-dir.y, dir.x);
+        var size = 10 * Mathf.Clamp(zoom, 0.5f, 1.5f);
+
+        var a = end - dir * size + normal * size * 0.5f;
+        var b = end - dir * size - normal * size * 0.5f;
+
+        Handles.DrawAAConvexPolygon(end, a, b);
+    }
+
     private void DrawStates() {
         foreach (var state in stateMachine.states) {
-            var screenRect = WorldToScreenRect(state.nodeRect);
+            var screenRect = WorldToScreen(state.nodeRect);
             if (!CanvasRect.Overlaps(screenRect)) {
                 continue;
             }
@@ -164,12 +250,12 @@ public class AnimStateMachineEditorWindow : EditorWindow {
 
             if (selectedStateIDs.Contains(state.id)) {
                 Handles.color = new Color(0.870f, 0.512f, 0.0435f, 1);
-                DrawRectOutline(screenRect, 2.5f);
+                DrawRectOutline(screenRect, StateOutlineThickness);
             }
 
             if (stateMachine.entryStateID == state.id) {
                 Handles.color = new Color(0.3f, 0.5f, 0.8f, 1);
-                DrawRectOutline(screenRect.ExpandBy(new RectOffset(3, 3, 3, 3)), 2f);
+                DrawRectOutline(screenRect.ExpandBy(new RectOffset(3, 3, 3, 3)), StateOutlineThickness);
             }
 
             Handles.EndGUI();
@@ -205,10 +291,29 @@ public class AnimStateMachineEditorWindow : EditorWindow {
         );
     }
 
+    private void ShowStateContextMenu(AnimState state, Vector2 position) {
+        var menu = new GenericMenu();
+        menu.AddItem(new GUIContent("Make Transition"), false, () => pendingTransitionSourceStateID = state.id);
+        menu.AddSeparator("");
+        menu.AddItem(new GUIContent("Rename"), false, () => BeginRenameState(state));
+        menu.AddItem(new GUIContent("Set As Default State"), stateMachine.entryStateID == state.id, () => SetEntryState(state.id));
+        menu.AddSeparator("");
+        menu.AddItem(new GUIContent("Delete State"), false, () => DeleteState(state.id));
+        menu.ShowAsContext();
+    }
+
+    private void ShowCanvasContextMenu(Vector2 position) {
+        var menu = new GenericMenu();
+        menu.AddItem(new GUIContent("Add State"), false, () => AddState(ScreenToWorld(position)));
+        // menu.AddSeparator("");
+        // menu.AddItem(new GUIContent("Frame All"), false, FrameAll);
+        menu.ShowAsContext();
+    }
+
     private AnimState FindStateAtScreenPoint(Vector2 point) {
         for (int i = stateMachine.states.Count - 1; i >= 0; i -= 1) {
             var state = stateMachine.states[i];
-            if (WorldToScreenRect(state.nodeRect).Contains(point)) {
+            if (WorldToScreen(state.nodeRect).Contains(point)) {
                 return state;
             }
         }
@@ -222,6 +327,7 @@ public class AnimStateMachineEditorWindow : EditorWindow {
             return;
         }
 
+        var isUsed = e.type == EventType.Used;
         var mouseInCanvas = canvas.Contains(e.mousePosition);
 
         switch (e.type) {
@@ -232,7 +338,9 @@ public class AnimStateMachineEditorWindow : EditorWindow {
             break;
 
         case EventType.MouseDown:
-            HandleMouseDown(e, mouseInCanvas);
+            if (mouseInCanvas) {
+                HandleMouseDown(e);
+            }
             break;
         case EventType.MouseDrag:
             HandleMouseDrag(e);
@@ -243,6 +351,10 @@ public class AnimStateMachineEditorWindow : EditorWindow {
         // case EventType.KeyDown:
         //     HandleKeyDown(e);
         //     break;
+        }
+
+        if (!isUsed && e.type == EventType.Used) {
+            Repaint();
         }
     }
 
@@ -257,20 +369,36 @@ public class AnimStateMachineEditorWindow : EditorWindow {
         var canvas = CanvasRect;
         viewOrigin = mouseWorldBefore - (e.mousePosition - canvas.position) / zoom;
 
-        Repaint();
-
         e.Use();
     }
 
-    private void HandleMouseDown(Event e, bool mouseInCanvas) {
-        if (!mouseInCanvas) {
-            return;
+    private void HandleMouseDown(Event e) {
+        if (pendingTransitionSourceStateID != null) {
+            if (e.button == (int)MouseButton.Left) {
+                var target = FindStateAtScreenPoint(e.mousePosition);
+                if (target != null) {
+                    CreateTransition(pendingTransitionSourceStateID, target.id);
+                }
+
+                pendingTransitionSourceStateID = null;
+                e.Use();
+
+                return;
+            }
+
+            if (e.button == (int)MouseButton.Right) {
+                pendingTransitionSourceStateID = null;
+                e.Use();
+
+                return;
+            }
         }
 
         if (e.button == (int)MouseButton.Middle || (e.button == (int)MouseButton.Left && e.alt)) {
             isPanning = true;
             panLastMouseScreenPosition = e.mousePosition;
             e.Use();
+
             return;
         }
 
@@ -278,6 +406,7 @@ public class AnimStateMachineEditorWindow : EditorWindow {
             if (renamingStateID != null) {
                 CommitRenameState();
                 e.Use();
+
                 return;
             }
 
@@ -286,6 +415,7 @@ public class AnimStateMachineEditorWindow : EditorWindow {
                 if (e.clickCount == 2) {
                     BeginRenameState(state);
                     e.Use();
+
                     return;
                 }
 
@@ -317,7 +447,21 @@ public class AnimStateMachineEditorWindow : EditorWindow {
 
             if (!e.shift) {
                 selectedStateIDs.Clear();
+                e.Use();
             }
+        }
+
+        if (e.button == (int)MouseButton.Right) {
+            var state = FindStateAtScreenPoint(e.mousePosition);
+            if (state != null) {
+                ShowStateContextMenu(state, e.mousePosition);
+                e.Use();
+
+                return;
+            }
+
+            ShowCanvasContextMenu(e.mousePosition);
+            e.Use();
         }
     }
 
@@ -327,7 +471,6 @@ public class AnimStateMachineEditorWindow : EditorWindow {
             viewOrigin -= delta / zoom;
             panLastMouseScreenPosition = e.mousePosition;
             e.Use();
-            Repaint();
 
             return;
         }
@@ -354,7 +497,6 @@ public class AnimStateMachineEditorWindow : EditorWindow {
 
             EditorUtility.SetDirty(stateMachine);
             e.Use();
-            Repaint();
 
             return;
         }
@@ -406,5 +548,61 @@ public class AnimStateMachineEditorWindow : EditorWindow {
         renameBuffer = "";
 
         Repaint();
+    }
+
+    private void SetEntryState(string stateID) {
+        Undo.RecordObject(stateMachine, "Set Entry State");
+
+        if (stateMachine.GetState(stateID) != null) {
+            stateMachine.entryStateID = stateID;
+        }
+
+        EditorUtility.SetDirty(stateMachine);
+    }
+
+    private void AddState(Vector2 position) {
+        Undo.RecordObject(stateMachine, "Add State");
+
+        var size = new Vector2(160, 60);
+        var state = new AnimState{
+            name="New State",
+            nodeRect=new Rect(position.x - size.x * 0.5f, position.y - size.y * 0.5f, size.x, size.y),
+            nodeColor=new Color(0.22f, 0.22f, 0.22f),
+        };
+        stateMachine.states.Add(state);
+
+        EditorUtility.SetDirty(stateMachine);
+
+        selectedStateIDs.Clear();
+        selectedStateIDs.Add(state.id);
+    }
+
+    private void DeleteState(string id) {
+        Undo.RecordObject(stateMachine, "Delete State");
+
+        var state = stateMachine.GetState(id);
+        if (state != null) {
+            stateMachine.states.Remove(state);
+        }
+
+        if (stateMachine.entryStateID == id) {
+            stateMachine.entryStateID = null;
+        }
+
+        EditorUtility.SetDirty(stateMachine);
+
+        selectedStateIDs.Remove(id);
+    }
+
+    private void CreateTransition(string fromStateID, string toStateID) {
+        Undo.RecordObject(stateMachine, "Create Transition");
+
+        var transition = new AnimStateTransition{
+            fromStateID=fromStateID,
+            toStateID=toStateID,
+        };
+        stateMachine.transitions.Add(transition);
+
+        EditorUtility.SetDirty(stateMachine);
     }
 }
