@@ -77,6 +77,9 @@ public class Character : MonoBehaviour {
     [SerializeField, SerializeReadOnly] private bool wantsCrouch;
     [SerializeField, SerializeReadOnly] private bool isAiming;
 
+    [Header("Animation")]
+    [SerializeField, SerializeReadOnly] private float stride;
+
     private CharacterController characterController;
     private CharacterAnimController animController;
     private Animator animator;
@@ -84,7 +87,9 @@ public class Character : MonoBehaviour {
     void Start() {
         characterController = GetComponent<CharacterController>();
         animController = GetComponentInChildren<CharacterAnimController>();
-        animator = GetComponentInChildren<Animator>();
+        if (animController == null) {
+            animator = GetComponentInChildren<Animator>();
+        }
     }
 
     void OnEnable() {
@@ -179,7 +184,8 @@ public class Character : MonoBehaviour {
             animController.Stride = moveInput.magnitude;
         }
         if (animator != null) {
-            animator.SetFloat("Stride", moveInput.magnitude);
+            stride = Mathf.Lerp(stride, moveInput.magnitude, 0.1f);
+            animator.SetFloat("Stride", stride);
             animator.SetBool("IsMoving", moveInput.magnitude > 0.0f);
         }
 
@@ -205,7 +211,9 @@ public class Character : MonoBehaviour {
                 dir = Quaternion.Euler(0, -currentHeading, 0) * dir;
             }
 
-            var magnitude = movementGait == MovementGait.Walk ? 0.2f : 1.0f;
+            var magnitude = movementGait == MovementGait.Walk ? 0.2f
+                : movementGait == MovementGait.Run ? 0.7f
+                : 1.0f;
 
             animator.SetBool("IsWalking", movementGait == MovementGait.Walk);
             animator.SetFloat("LeanVelocityX", dir.x * magnitude);

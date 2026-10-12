@@ -1,0 +1,115 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 896c5c4f60654d040bb53411d558c379, type: 3}
+  m_Name: LeanDetail_StateMachine
+  m_EditorClassIdentifier: Assembly-CSharp::AnimStateMachine
+  states:
+  - id: b9a8a50f-f008-4687-a504-f7859ee8db06
+    name: New State
+    graph: {fileID: 0}
+    nodeRect:
+      serializedVersion: 2
+      x: 70
+      y: 0
+      width: 160
+      height: 60
+    nodeColor: {r: 0.22, g: 0.22, b: 0.22, a: 1}
+  - id: 464a5842-556e-4426-9adb-dbbed0ee0f6f
+    name: New State
+    graph: {fileID: 0}
+    nodeRect:
+      serializedVersion: 2
+      x: 390
+      y: -0
+      width: 160
+      height: 60
+    nodeColor: {r: 0.22, g: 0.22, b: 0.22, a: 1}
+  - id: b996b25d-e819-41b2-b44b-5e0405f25b0e
+    name: New State
+    graph: {fileID: 0}
+    nodeRect:
+      serializedVersion: 2
+      x: 230
+      y: 150
+      width: 160
+      height: 60
+    nodeColor: {r: 0.22, g: 0.22, b: 0.22, a: 1}
+  - id: ab2433b5-8a93-458c-8824-c4e276b60c9d
+    name: New State
+    graph: {fileID: 0}
+    nodeRect:
+      serializedVersion: 2
+      x: 598.2189
+      y: 141.76135
+      width: 160
+      height: 60
+    nodeColor: {r: 0.22, g: 0.22, b: 0.22, a: 1}
+  transitions:
+  - id: 4bb9c8d1-6d50-4ec3-b9c6-b2e6adf8a2fe
+    name: 
+    fromStateID: b9a8a50f-f008-4687-a504-f7859ee8db06
+    toStateID: 464a5842-556e-4426-9adb-dbbed0ee0f6f
+    conditionExpression:
+      rid: 3972283068043231304
+  - id: 8527c5f9-c737-4858-a8e8-e175b982fffb
+    name: 
+    fromStateID: 464a5842-556e-4426-9adb-dbbed0ee0f6f
+    toStateID: b9a8a50f-f008-4687-a504-f7859ee8db06
+    conditionExpression:
+      rid: 3972283068043231305
+  - id: 6c2a65d2-49fa-4cfc-8863-1763f4626ec8
+    name: 
+    fromStateID: 464a5842-556e-4426-9adb-dbbed0ee0f6f
+    toStateID: b996b25d-e819-41b2-b44b-5e0405f25b0e
+    conditionExpression:
+      rid: 3972283068043231306
+  - id: 3512a4f9-17e2-4f1c-9a29-dc3bc181b722
+    name: 
+    fromStateID: b996b25d-e819-41b2-b44b-5e0405f25b0e
+    toStateID: b9a8a50f-f008-4687-a504-f7859ee8db06
+    conditionExpression:
+      rid: 3972283068043231307
+  - id: 2fb127ed-e9ff-4513-8755-97793becf198
+    name: 
+    fromStateID: ab2433b5-8a93-458c-8824-c4e276b60c9d
+    toStateID: 464a5842-556e-4426-9adb-dbbed0ee0f6f
+    conditionExpression:
+      rid: 3972283068043231308
+  entryStateID: ab2433b5-8a93-458c-8824-c4e276b60c9d
+  references:
+    version: 2
+    RefIds:
+    - rid: 3972283068043231304
+      type: {class: ConditionBoolValue, ns: , asm: Assembly-CSharp}
+      data:
+        kind: 3
+        value: 1
+    - rid: 3972283068043231305
+      type: {class: ConditionBoolValue, ns: , asm: Assembly-CSharp}
+      data:
+        kind: 3
+        value: 1
+    - rid: 3972283068043231306
+      type: {class: ConditionBoolValue, ns: , asm: Assembly-CSharp}
+      data:
+        kind: 3
+        value: 1
+    - rid: 3972283068043231307
+      type: {class: ConditionBoolValue, ns: , asm: Assembly-CSharp}
+      data:
+        kind: 3
+        value: 1
+    - rid: 3972283068043231308
+      type: {class: ConditionBoolValue, ns: , asm: Assembly-CSharp}
+      data:
+        kind: 3
+        value: 1

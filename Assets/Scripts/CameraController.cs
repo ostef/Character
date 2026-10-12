@@ -51,9 +51,10 @@ public class CameraController : MonoBehaviour {
             + transform.up * targetOffset.y;
 
         var targetPosition = lookAtPosition - transform.forward * targetDistance;
+        var rayCastStartDistance = 2.0f;
 
         RaycastHit raycastResult;
-        if (Physics.Raycast(lookAtPosition, -transform.forward, out raycastResult, targetDistance - wallPenetrationThreshold)) {
+        if (Physics.Raycast(lookAtPosition - transform.forward * rayCastStartDistance, -transform.forward, out raycastResult, targetDistance - wallPenetrationThreshold - rayCastStartDistance)) {
             targetPosition = raycastResult.point + transform.forward * wallPenetrationThreshold;
 
             // Cool effect: make the FOV zoom when colliding
