@@ -11,12 +11,18 @@ public class AnimStateMachineEditorWindow : EditorWindow {
     private const float StateOutlineThickness = 4.0f;
     private const float TransitionThickness = 4.0f;
     private const float SelectedTransitionThickness = 6.0f;
+    private const float TransitionPickDistance = 6.0f;
+
+    private static readonly Color SelectionColor = new Color(0.870f, 0.512f, 0.0435f, 1);
 
     private AnimStateMachine stateMachine = null;
     private Vector2 viewOrigin = new Vector2(-100, -100);
     private float zoom = 1.0f;
 
     private List<string> selectedStateIDs = new();
+    private string selectedTransitionID;
+
+    private AnimStateMachineSelection inspectorSelection;
 
     private string renamingStateID;
     private string renameBuffer;
@@ -48,7 +54,10 @@ public class AnimStateMachineEditorWindow : EditorWindow {
         }
 
         var window = GetWindow<AnimStateMachineEditorWindow>("State Machine");
-        window.stateMachine = obj;
+        if (window.stateMachine != obj) {
+            window.stateMachine = obj;
+            window.ClearSelection();
+        }
         // window.FrameAll();
         window.Show();
 
@@ -62,6 +71,15 @@ public class AnimStateMachineEditorWindow : EditorWindow {
 
     private void OnDisable() {
         Undo.undoRedoPerformed -= Repaint;
+
+        if (inspectorSelection != null) {
+            if (Selection.activeObject == inspectorSelection) {
+                Selection.activeObject = null;
+            }
+
+            DestroyImmediate(inspectorSelection);
+            inspectorSelection = null;
+        }
     }
 
     private Vector2 WorldToScreen(Vector2 world) {
@@ -166,21 +184,33 @@ public class AnimStateMachineEditorWindow : EditorWindow {
     }
 
     private void DrawSingleTransition(AnimStateTransition transition, float offset) {
+        if (!TryGetTransitionScreenSegment(transition, out var start, out var end)) {
+            return;
+        }
+
+        var isSelected = transition.id == selectedTransitionID;
+
+        Handles.color = isSelected ? SelectionColor : new Color(0.85f, 0.85f, 0.85f);
+        Handles.DrawAAPolyLine(isSelected ? SelectedTransitionThickness : TransitionThickness, start, end);
+        DrawArrowHead(start, end);
+    }
+
+    private bool TryGetTransitionScreenSegment(AnimStateTransition transition, out Vector2 start, out Vector2 end) {
+        start = end = Vector2.zero;
+
         var fromState = stateMachine.GetState(transition.fromStateID);
         var toState = stateMachine.GetState(transition.toStateID);
         if (fromState == null || toState == null) {
-            return;
+            return false;
         }
 
         var fromScreen = WorldToScreen(fromState.nodeRect);
         var toScreen = WorldToScreen(toState.nodeRect);
 
-        var start = GetClosestPointOnRect(fromScreen, toScreen.center);
-        var end = GetClosestPointOnRect(toScreen, fromScreen.center);
+        start = GetClosestPointOnRect(fromScreen, toScreen.center);
+        end = GetClosestPointOnRect(toScreen, fromScreen.center);
 
-        Handles.color = new Color(0.85f, 0.85f, 0.85f);
-        Handles.DrawAAPolyLine(TransitionThickness, start, end);
-        DrawArrowHead(start, end);
+        return true;
     }
 
     private void DrawPendingTransition() {
@@ -249,7 +279,7 @@ public class AnimStateMachineEditorWindow : EditorWindow {
             DrawRectOutline(screenRect, 1.5f);
 
             if (selectedStateIDs.Contains(state.id)) {
-                Handles.color = new Color(0.870f, 0.512f, 0.0435f, 1);
+                Handles.color = SelectionColor;
                 DrawRectOutline(screenRect, StateOutlineThickness);
             }
 
@@ -353,6 +383,76 @@ public class AnimStateMachineEditorWindow : EditorWindow {
         return null;
     }
 
+    private AnimStateTransition FindTransitionAtScreenPoint(Vector2 point) {
+        AnimStateTransition closest = null;
+        var closestDistance = TransitionPickDistance;
+
+        foreach (var transition in stateMachine.transitions) {
+            if (!TryGetTransitionScreenSegment(transition, out var start, out var end)) {
+                continue;
+            }
+
+            var distance = HandleUtility.DistancePointLine(point, start, end);
+            if (distance <= closestDistance) {
+                closest = transition;
+                closestDistance = distance;
+            }
+        }
+
+        return closest;
+    }
+
+    public void SelectState(string stateID) {
+        selectedTransitionID = null;
+        selectedStateIDs.Clear();
+        selectedStateIDs.Add(stateID);
+
+        UpdateInspectorSelection();
+        Repaint();
+    }
+
+    public void SelectTransition(string transitionID) {
+        selectedTransitionID = transitionID;
+        selectedStateIDs.Clear();
+
+        UpdateInspectorSelection();
+        Repaint();
+    }
+
+    private void ClearSelection() {
+        selectedTransitionID = null;
+        selectedStateIDs.Clear();
+
+        UpdateInspectorSelection();
+        Repaint();
+    }
+
+    // Shows the selected transition, or the selected state if exactly one is selected, in the Inspector
+    private void UpdateInspectorSelection() {
+        var stateID = selectedTransitionID == null && selectedStateIDs.Count == 1 ? selectedStateIDs[0] : null;
+
+        if (stateMachine == null || (stateID == null && selectedTransitionID == null)) {
+            if (inspectorSelection != null && Selection.activeObject == inspectorSelection) {
+                Selection.activeObject = null;
+            }
+
+            return;
+        }
+
+        if (inspectorSelection == null) {
+            inspectorSelection = CreateInstance<AnimStateMachineSelection>();
+            inspectorSelection.hideFlags = HideFlags.DontSave;
+        }
+
+        inspectorSelection.window = this;
+        inspectorSelection.stateMachine = stateMachine;
+        inspectorSelection.stateID = stateID;
+        inspectorSelection.transitionID = selectedTransitionID;
+        inspectorSelection.RefreshName();
+
+        Selection.activeObject = inspectorSelection;
+    }
+
     private void HandleInput(Rect canvas) {
         var e = Event.current;
         if (e == null) {
@@ -451,6 +551,7 @@ public class AnimStateMachineEditorWindow : EditorWindow {
                     return;
                 }
 
+                selectedTransitionID = null;
                 if (e.shift) {
                     if (!selectedStateIDs.Contains(state.id)) {
                         selectedStateIDs.Add(state.id);
@@ -459,6 +560,8 @@ public class AnimStateMachineEditorWindow : EditorWindow {
                     selectedStateIDs.Clear();
                     selectedStateIDs.Add(state.id);
                 }
+
+                UpdateInspectorSelection();
 
                 isDraggingStates = true;
                 dragStateStartMouseWorldPosition = ScreenToWorld(e.mousePosition);
@@ -477,8 +580,16 @@ public class AnimStateMachineEditorWindow : EditorWindow {
                 return;
             }
 
+            var transition = FindTransitionAtScreenPoint(e.mousePosition);
+            if (transition != null) {
+                SelectTransition(transition.id);
+                e.Use();
+
+                return;
+            }
+
             if (!e.shift) {
-                selectedStateIDs.Clear();
+                ClearSelection();
                 e.Use();
             }
         }
@@ -579,6 +690,10 @@ public class AnimStateMachineEditorWindow : EditorWindow {
         renamingStateID = null;
         renameBuffer = "";
 
+        if (inspectorSelection != null) {
+            inspectorSelection.RefreshName();
+        }
+
         Repaint();
     }
 
@@ -605,8 +720,7 @@ public class AnimStateMachineEditorWindow : EditorWindow {
 
         EditorUtility.SetDirty(stateMachine);
 
-        selectedStateIDs.Clear();
-        selectedStateIDs.Add(state.id);
+        SelectState(state.id);
     }
 
     private void DeleteState(string id) {
@@ -624,6 +738,7 @@ public class AnimStateMachineEditorWindow : EditorWindow {
         EditorUtility.SetDirty(stateMachine);
 
         selectedStateIDs.Remove(id);
+        UpdateInspectorSelection();
     }
 
     private void CreateTransition(string fromStateID, string toStateID) {
